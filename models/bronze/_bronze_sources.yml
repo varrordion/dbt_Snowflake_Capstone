@@ -1,0 +1,53 @@
+
+version: 2
+
+sources:
+  - name: capstone_external
+    description: >
+      Snowflake external tables created over JSON files stored in Azure Data
+      Lake Storage. These objects are read-only sources for the Bronze layer.
+
+    database: CT_VARNAN_DEWANGAN_DB
+    schema: CAPSTONE
+    config: 
+          freshness:
+            warn_after:
+              count: 1
+              period: day
+            error_after:
+              count: 2
+              period: day
+          loaded_at_field: METADATA$FILE_LAST_MODIFIED
+        
+
+    tables:
+      - name: campaign
+        identifier: EXT_CAMPAIGN_DATA
+        description: Raw campaign JSON records from ADLS.
+
+      - name: customer
+        identifier: EXT_CUSTOMER_DATA
+        description: Raw customer JSON records from ADLS.
+
+      - name: employee
+        identifier: EXT_EMPLOYEE_DATA
+        description: Raw employee JSON records from ADLS.
+
+      - name: orders
+        identifier: EXT_ORDERS_DATA
+        description: Raw order JSON records from ADLS.
+
+      - name: product
+        identifier: EXT_PRODUCT_DATA
+        description: Raw product JSON records from ADLS.
+        config: 
+          freshness: null
+
+
+      - name: store
+        identifier: EXT_STORE_DATA
+        description: Raw store JSON records from ADLS.
+
+      - name: supplier
+        identifier: EXT_SUPPLIER_DATA
+        description: Raw supplier JSON records from ADLS.
