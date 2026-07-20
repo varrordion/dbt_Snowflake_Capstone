@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: Generated date dimension spanning the data window, via dbt_utils.date_spine.
+    columns:
+      - name: date_key
+        description: Surrogate key in YYYYMMDD integer format.
+        tests:
+          - unique
+          - not_null
+
+      - name: full_date
+        tests:
+          - unique
+          - not_null
+
+      - name: is_weekend
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_holiday
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: season
+        tests:
+          - accepted_values:
+              values: ["Winter", "Spring", "Summer", "Fall"]
+
+      - name: day_of_week
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "Sun",
+                  "Mon",
+                  "Tue",
+                  "Wed",
+                  "Thu",
+                  "Fri",
+                  "Sat",
+                ]

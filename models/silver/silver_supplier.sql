@@ -4,11 +4,8 @@
 ) }}
 
 with supplier_source as (
-
     select
-
         supplier.value as supplier_record,
-
         _source_file,
         _source_file_row_number,
         _source_file_last_modified,

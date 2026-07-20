@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: fact_sales
+    description: Sales fact table at order_id + product_id (line-item) grain.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - product_key
+
+    columns:
+
+      - name: sales_key
+        description: Surrogate key, hash of order_id + product_id.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        data_tests:
+          - not_null
+
+      - name: customer_sk
+        description: Foreign key to dim_customer.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_sk
+
+      - name: product_key
+        description: Foreign key to dim_product.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: product_key
+
+      - name: store_key
+        description: Foreign key to dim_store.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_store')
+              field: store_key
+
+      - name: employee_key
+        description: Foreign key to dim_employee.
+        data_tests:
+          - relationships:
+              to: ref('dim_employee')
+              field: employee_key
+
+      - name: date_key
+        description: Foreign key to dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+
+      - name: sales_channel
+        data_tests:
+          - accepted_values:
+              values: ['Website', 'In-Store', 'Mobile App', 'Phone']
+
+      - name: product_category
+        data_tests:
+          - not_null

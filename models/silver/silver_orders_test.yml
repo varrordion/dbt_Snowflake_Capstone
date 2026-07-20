@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: silver_orders
+    description: Cleaned order line items, one row per order_id + product_id (line-item grain).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - product_id
+
+    columns:
+
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: product_id
+        tests:
+          - not_null
+
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('silver_customer')
+              field: customer_id
+
+      - name: employee_id
+        tests:
+          - relationships:
+              to: ref('silver_employee')
+              field: employee_id
+
+      - name: store_id
+        tests:
+          - relationships:
+              to: ref('silver_store')
+              field: store_id
+
+      - name: campaign_id
+        tests:
+          - relationships:
+              to: ref('silver_campaign')
+              field: campaign_id
+
+      - name: delivery_status
+        tests:
+          - accepted_values:
+              values: ['On Time', 'Delayed', 'Potentially Delayed', 'In Transit']
+
+      - name: order_time_of_day
+        tests:
+          - accepted_values:
+              values: ['Morning', 'Afternoon', 'Evening', 'Night']

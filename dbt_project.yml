@@ -34,3 +34,17 @@ models:
       +materialized: view
       +tags:
         - silver
+
+    gold:
+      +database: CT_VARNAN_DEWANGAN_DB
+      +schema: GOLD
+      +tags: 
+        - gold
+
+    reporting_views:
+      +database: CT_VARNAN_DEWANGAN_DB
+      +schema: REPORTING_VIEWS
+      +tags:
+        - reporting_views
+
+

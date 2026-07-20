@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: silver_store
+    description: Cleaned and deduplicated store data, one row per store_id.
+    columns:
+
+      - name: store_id
+        description: Primary key for the store, deduplicated to latest version.
+        tests:
+          - unique
+          - not_null
+
+      - name: manager_id
+        tests:
+          - relationships:
+              to: ref('silver_employee')
+              field: employee_id
+
+      - name: store_name
+        tests:
+          - not_null
+
+      - name: store_size_category
+        description: Size segment derived from size_sq_ft.
+        tests:
+          - accepted_values:
+              values: ['Small', 'Medium', 'Large']
+
+      - name: is_active
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: has_performance_issue
+        description: Flag derived from sales_target_achievement_percentage < 90%.
+        tests:
+          - accepted_values:
+              values: [true, false]

@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: silver_product
+    description: Cleaned and deduplicated product data, one row per product_id.
+    columns:
+
+      - name: product_id
+        description: Primary key for the product, deduplicated to latest version.
+        tests:
+          - unique
+          - not_null
+
+      - name: supplier_id
+        tests:
+          - relationships:
+              to: ref('silver_supplier')
+              field: supplier_id
+
+      - name: product_name
+        tests:
+          - not_null
+
+      - name: unit_price
+        tests:
+          - not_null
+
+      - name: is_low_stock
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_featured
+        tests:
+          - accepted_values:
+              values: [true, false]
