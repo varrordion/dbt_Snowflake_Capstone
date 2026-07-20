@@ -83,3 +83,6 @@ left join {{ ref('dim_employee') }} de
 
 left join {{ ref('dim_date') }} dd
     on to_date(so.order_date) = dd.full_date
+
+
+
