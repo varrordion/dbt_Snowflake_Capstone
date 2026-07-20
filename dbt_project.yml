@@ -47,4 +47,8 @@ models:
       +tags:
         - reporting_views
 
+    elementary:
+      +schema: elementary
+
+
 
