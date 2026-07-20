@@ -10,7 +10,7 @@ with employee_source as (
         _source_file_row_number,
         _source_file_last_modified,
         _loaded_at
-    from {{ ref('bronze_employee') }},
+    from {{ ref('snapshot_bronze_employee') }},
     lateral flatten(
         input => raw_record:employees_data
     ) employee

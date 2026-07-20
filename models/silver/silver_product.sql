@@ -11,7 +11,7 @@ with product_source as (
         _source_file_row_number,
         _source_file_last_modified,
         _loaded_at
-    from {{ ref('bronze_product') }},
+    from {{ ref('snapshot_bronze_product') }},
 
     lateral flatten(
         input => raw_record:products_data

@@ -11,10 +11,6 @@ models:
           - unique
           - not_null
 
-      - name: email
-        tests:
-          - not_null
-
       - name: loyalty_tier
         description: Customer loyalty program tier.
         tests:

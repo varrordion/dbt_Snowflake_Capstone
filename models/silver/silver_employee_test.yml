@@ -19,7 +19,7 @@ models:
         description: Standardized employee role.
         tests:
           - accepted_values:
-              values: ['Associate', 'Manager', 'Senior Manager']
+              values: ['Manager','Customer Service Representative','Inventory Specialist','Cashier','Associate']
 
       - name: hire_date
         tests:

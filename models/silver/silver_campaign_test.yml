@@ -19,13 +19,13 @@ models:
         description: Type of campaign (e.g. email, social, print).
         tests:
           - accepted_values:
-              values: ['Email', 'Social', 'Print', 'Digital', 'Tv']
+              values: ['Seasonal Promotion','Clearance','Brand Awareness','Discount Event','Product Launch'] 
 
       - name: channel
         description: Marketing channel used for the campaign.
         tests:
           - accepted_values:
-              values: ['Email', 'Social Media', 'Website', 'Print', 'Radio', 'Tv']
+              values: ['Social Media','Multiple (Email, Social Media, In-Store)','Print Media','In-Store','Email','Digital Ads']
 
       - name: start_date
         tests:

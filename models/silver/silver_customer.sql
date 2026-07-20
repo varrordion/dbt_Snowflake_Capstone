@@ -10,7 +10,7 @@ with customer_source as (
         _source_file_row_number,
         _source_file_last_modified,
         _loaded_at
-    from {{ ref('bronze_customer') }},
+    from {{ ref('snapshot_bronze_customer') }},
     lateral flatten(
         input => raw_record:customers_data
     ) customer
@@ -90,15 +90,11 @@ business_transformations as (
         -- AGE BUCKET
         -------------------------------------------------
         case
-            when datediff(year, birth_date, current_date()) < 25
-                then '18-24'
-            when datediff(year, birth_date, current_date()) between 25 and 34
-                then '25-34'
-            when datediff(year, birth_date, current_date()) between 35 and 44
-                then '35-44'
-            when datediff(year, birth_date, current_date()) between 45 and 54
-                then '45-54'
-            else '55+'
+            when datediff(year, birth_date, current_date()) < 36
+                then '18-35'
+            when datediff(year, birth_date, current_date()) between 36 and 55
+                then '36-55'
+            else '56+'
         end as age_bucket,
         -------------------------------------------------
         -- CUSTOMER TENURE
