@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: silver_supplier
+    description: Cleaned and deduplicated supplier data, one row per supplier_id.
+    columns:
+
+      - name: supplier_id
+        description: Primary key for the supplier, deduplicated to latest version.
+        tests:
+          - unique
+          - not_null
+
+      - name: supplier_name
+        tests:
+          - not_null
+
+      - name: email
+        tests:
+          - not_null
+
+      - name: is_active
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: exclusivity
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: renewal_option
+        tests:
+          - accepted_values:
+              values: [true, false]

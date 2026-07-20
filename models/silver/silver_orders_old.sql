@@ -3,10 +3,11 @@
     tags=['silver']
 ) }}
 
-with orders_flat as (
+with order_source as (
 
     select
         orders.value as order_record,
+        item.value as item_record,
 
         _source_file,
         _source_file_row_number,
@@ -17,54 +18,11 @@ with orders_flat as (
 
     lateral flatten(
         input => raw_record:orders_data
-    ) orders
-
-)
-
-, orders_deduped as (
-
-    select *
-
-    from orders_flat
-
-    qualify row_number() over (
-
-        partition by order_record:order_id::string
-
-        order by
-            _source_file_last_modified desc,
-            _loaded_at desc
-
-    ) = 1
-
-)
-
-, order_source as (
-
-    select
-        od.order_record,
-        item.value as item_record,
-
-        od._source_file,
-        od._source_file_row_number,
-        od._source_file_last_modified,
-        od._loaded_at
-
-    from orders_deduped od,
+    ) orders,
 
     lateral flatten(
-        input => od.order_record:order_items
+        input => orders.value:order_items
     ) item
-
-    qualify row_number() over (
-
-        partition by
-            od.order_record:order_id::string,
-            item.value:product_id::string
-
-        order by item.index
-
-    ) = 1
 
 )
 
@@ -293,61 +251,80 @@ with orders_flat as (
 
 )
 
-, with_order_totals as (
+, aggregated as (
 
     select
 
-        *,
+        order_id,
 
-        -------------------------------------------------
-        -- Order-Level Totals (repeated across all line items
-        -- of the same order_id via window functions)
-        -------------------------------------------------
+        count(product_id) as total_items,
 
-        count(product_id) over (
-            partition by order_id
-        ) as total_items,
+        sum(quantity) as total_quantity,
 
-        sum(quantity) over (
-            partition by order_id
-        ) as total_quantity,
+        sum(quantity * unit_price) as items_total_amount,
 
-        sum(quantity * unit_price) over (
-            partition by order_id
-        ) as items_total_amount,
+        sum(quantity * cost_price) as items_total_cost,
 
-        sum(quantity * cost_price) over (
-            partition by order_id
-        ) as items_total_cost,
+        sum(item_discount_amount) as items_total_discount,
 
-        sum(item_discount_amount) over (
-            partition by order_id
-        ) as items_total_discount,
+        sum(line_revenue) as line_revenue,
 
-        sum(line_revenue) over (
-            partition by order_id
-        ) as order_line_revenue,
+        sum(line_cost) as line_cost,
 
-        sum(line_cost) over (
-            partition by order_id
-        ) as order_line_cost,
-
-        sum(profit_amount) over (
-            partition by order_id
-        ) as order_profit_amount,
+        sum(profit_amount) as profit_amount,
 
         case
-            when sum(line_revenue) over (partition by order_id) > 0
-            then (
-                sum(profit_amount) over (partition by order_id)
-                / sum(line_revenue) over (partition by order_id)
-            ) * 100
+            when sum(line_revenue) > 0
+            then (sum(profit_amount) / sum(line_revenue)) * 100
             else null
-        end as order_profit_margin_percentage
+        end as profit_margin_percentage,
 
+        max(customer_id) as customer_id,
+        max(employee_id) as employee_id,
+        max(store_id) as store_id,
+        max(campaign_id) as campaign_id,
+
+        max(created_at) as created_at,
+        max(order_date) as order_date,
+        max(shipping_date) as shipping_date,
+        max(delivery_date) as delivery_date,
+        max(estimated_delivery_date) as estimated_delivery_date,
+
+        max(order_status) as order_status,
+        max(order_source) as order_source,
+        max(payment_method) as payment_method,
+        max(shipping_method) as shipping_method,
+
+        max(total_amount) as total_amount,
+        max(discount_amount) as discount_amount,
+        max(tax_amount) as tax_amount,
+        max(shipping_cost) as shipping_cost,
+
+        max(order_time_of_day) as order_time_of_day,
+        max(order_week) as order_week,
+        max(order_month) as order_month,
+        max(order_quarter) as order_quarter,
+        max(order_year) as order_year,
+
+        max(processing_days) as processing_days,
+        max(shipping_days) as shipping_days,
+        max(delivery_status) as delivery_status,
+
+        max(billing_city) as billing_city,
+        max(billing_state) as billing_state,
+        max(billing_street) as billing_street,
+        max(billing_zip_code) as billing_zip_code,
+
+        max(shipping_city) as shipping_city,
+        max(shipping_state) as shipping_state,
+        max(shipping_street) as shipping_street,
+        max(shipping_zip_code) as shipping_zip_code,
+        max(_source_file) as _source_file,
+        max(_loaded_at) as _loaded_at
+        
     from calculated
-
+    group by order_id
 )
 
 select *
-from with_order_totals
+from aggregated

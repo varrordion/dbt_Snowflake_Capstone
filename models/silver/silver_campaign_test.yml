@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: silver_campaign
+    description: Cleaned and deduplicated campaign data, one row per campaign_id.
+    columns:
+
+      - name: campaign_id
+        description: Primary key for the campaign, deduplicated to latest version.
+        tests:
+          - unique
+          - not_null
+
+      - name: campaign_name
+        tests:
+          - not_null
+
+      - name: campaign_type
+        description: Type of campaign (e.g. email, social, print).
+        tests:
+          - accepted_values:
+              values: ['Email', 'Social', 'Print', 'Digital', 'Tv']
+
+      - name: channel
+        description: Marketing channel used for the campaign.
+        tests:
+          - accepted_values:
+              values: ['Email', 'Social Media', 'Website', 'Print', 'Radio', 'Tv']
+
+      - name: start_date
+        tests:
+          - not_null
+
+      - name: end_date
+        tests:
+          - not_null

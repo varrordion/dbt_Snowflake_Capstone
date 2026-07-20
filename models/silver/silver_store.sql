@@ -6,14 +6,11 @@
 with store_source as (
 
     select
-
         store.value as store_record,
-
         _source_file,
         _source_file_row_number,
         _source_file_last_modified,
         _loaded_at
-
     from {{ ref('bronze_store') }},
 
     lateral flatten(

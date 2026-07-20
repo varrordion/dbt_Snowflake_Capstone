@@ -1,9 +1,9 @@
-{% snapshot snapshot_customer %}
+{% snapshot snapshot_employee %}
 
 {{
     config(
       target_schema='CAPSTONE_SNAPSHOT',
-      unique_key='customer_id',
+      unique_key='employee_id',
       strategy='timestamp',
       updated_at='last_modified_date',
       invalidate_hard_deletes=True
@@ -11,6 +11,6 @@
 }}
 
 select *
-from {{ ref('silver_customer') }}
+from {{ ref('silver_employee') }}
 
 {% endsnapshot %}

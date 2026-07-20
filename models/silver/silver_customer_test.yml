@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: silver_customer
+    description: Cleaned and deduplicated customer data, one row per customer_id.
+    columns:
+
+      - name: customer_id
+        description: Primary key for the customer, deduplicated to latest version.
+        tests:
+          - unique
+          - not_null
+
+      - name: email
+        tests:
+          - not_null
+
+      - name: loyalty_tier
+        description: Customer loyalty program tier.
+        tests:
+          - accepted_values:
+              values: ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']
+
+      - name: customer_value_bucket
+        description: Value segment derived from total_spend.
+        tests:
+          - accepted_values:
+              values: ['HIGH VALUE', 'MEDIUM VALUE', 'LOW VALUE']
+
+      - name: marketing_segment
+        description: Segment derived from marketing_opt_in flag.
+        tests:
+          - accepted_values:
+              values: ['MARKETABLE', 'DO_NOT_CONTACT']
+
+      - name: communication_group
+        description: Segment derived from preferred_communication.
+        tests:
+          - accepted_values:
+              values: ['DIGITAL', 'VOICE', 'OTHER']
+
+      - name: age_bucket
+        description: Age segment derived from birth_date.
+        tests:
+          - accepted_values:
+              values: ['18-35', '36-55', '56+']
+
+      - name: is_active_customer
+        tests:
+          - accepted_values:
+              values: [true, false]

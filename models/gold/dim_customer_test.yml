@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: Customer dimension with SCD2 history from snapshot_customer.
+    columns:
+
+      - name: customer_sk
+        description: Surrogate key, unique per SCD2 version of a customer.
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: Durable business key for the customer.
+        tests:
+          - not_null
+          
+      - name: customer_segment_impact
+        description: Value segment derived from total_spend.
+        tests:
+          - accepted_values:
+              values: ['HIGH VALUE', 'MEDIUM VALUE', 'LOW VALUE']
+
+      - name: is_current
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: valid_from
+        tests:
+          - not_null

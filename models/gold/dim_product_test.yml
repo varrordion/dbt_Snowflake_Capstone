@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: dim_product
+    description: Product dimension with SCD2 history from snapshot_product.
+    columns:
+
+      - name: product_key
+        description: Surrogate key, unique per SCD2 version of a product.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: product_id
+        description: Durable business key for the product.
+        data_tests:
+          - not_null
+
+      - name: supplier_id
+        data_tests:
+          - relationships:
+              to: ref('silver_supplier')
+              field: supplier_id
+
+      - name: product_name
+        data_tests:
+          - not_null
+
+      - name: unit_price
+        data_tests:
+          - not_null
+
+      - name: is_low_stock
+        data_tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_featured
+        data_tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_current
+        data_tests:
+          - accepted_values:
+              values: [true, false]

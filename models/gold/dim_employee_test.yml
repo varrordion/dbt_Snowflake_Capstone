@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: dim_employee
+    description: Employee dimension with SCD2 history from snapshot_employee.
+    columns:
+
+      - name: employee_key
+        description: Surrogate key, unique per SCD2 version of an employee.
+        tests:
+          - unique
+          - not_null
+
+      - name: employee_id
+        description: Durable business key for the employee.
+        tests:
+          - not_null
+
+      - name: manager_id
+        description: Self-referencing foreign key to another employee's employee_id.
+        data_tests:
+          - relationships:
+              to: ref('dim_employee')
+              field: employee_id
+
+      - name: email
+        tests:
+          - not_null
+
+      - name: role
+        description: Standardized employee role.
+        data_tests:
+          - accepted_values:
+              values: ['Associate','Inventory Specialist','Manager','Cashier','Customer Service Representative']
+
+      - name: is_current
+        data_tests:
+          - accepted_values:
+              values: [true, false]
